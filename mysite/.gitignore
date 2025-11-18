@@ -1,0 +1,55 @@
+# ---- Unnecessary / common ignores added by assistant ----
+
+# Virtual environments
+env/
+venv/
+ENV/
+.env
+*.env
+
+# Python cache and bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django
+db.sqlite3
+/media/
+/original_images/
+staticfiles/
+*.log
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node / frontend
+node_modules/
+dist/
+build/
+
+# Packaging
+*.egg-info/
+pip-wheel-metadata/
+*.egg
+*.whl
+
+# Tests / coverage
+htmlcov/
+.coverage
+
+# Misc temp files
+*.bak
+*.swp
+*.tmp
+*.temp
+.python-version
+
+# End of added patterns
+
