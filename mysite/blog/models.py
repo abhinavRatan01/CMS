@@ -4,7 +4,10 @@ from django.db import models
 # Add these:
 from wagtail.models import Page, Orderable
 from wagtail.fields import RichTextField
-from modelcluster.fields import ParentalKey
+from modelcluster.fields import ParentalKey, ParentalManyToManyField
+from wagtail.snippets.models import register_snippet
+from wagtail.admin.panels import FieldPanel, MultiFieldPanel
+from django import forms
 
 
 class BlogIndexPage(Page):
@@ -22,7 +25,9 @@ class BlogPage(Page):
     date = models.DateField("Post date")
     intro = models.CharField(max_length=250)
     body = RichTextField(blank=True)
-    # Add the main_image method:
+    
+    authors = ParentalManyToManyField('blog.Author', blank=True)
+
     def main_image(self):
         gallery_item = self.gallery_images.first()
         if gallery_item:
@@ -30,7 +35,13 @@ class BlogPage(Page):
         else:
             return None
 
-    content_panels = Page.content_panels + ["date", "intro", "body", "gallery_images"]
+    content_panels = Page.content_panels + [
+        MultiFieldPanel([
+            "date",
+            FieldPanel("authors", widget=forms.CheckboxSelectMultiple),
+        ], heading="Blog information"),
+        "intro", "body", "gallery_images"
+    ]
     
 class BlogPageGalleryImage(Orderable):
     page = ParentalKey(BlogPage, on_delete=models.CASCADE, related_name='gallery_images')
@@ -40,3 +51,19 @@ class BlogPageGalleryImage(Orderable):
     caption = models.CharField(blank=True, max_length=250)
 
     panels = ["image", "caption"]
+
+@register_snippet
+class Author(models.Model):
+    name = models.CharField(max_length=255)
+    author_image = models.ForeignKey(
+        'wagtailimages.Image', null=True, blank=True,
+        on_delete=models.SET_NULL, related_name='+'
+    )
+
+    panels = ["name", "author_image"]
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name_plural = 'Authors'
